@@ -11,8 +11,9 @@ function App() {
       const text = e.target?.result as string
       try {
         const json = JSON.parse(text)
-        console.log("Parsed JSON:", json)
-        console.log("Top-level keys:", Object.keys(json))
+        const convos = Array.isArray(json) ? json : json.conversations ?? []
+        console.log(`✓ Loaded ${convos.length} conversations`)
+        console.log("First conversation:", convos[0])
       } catch (err) {
         console.error("Not valid JSON:", err)
       }
