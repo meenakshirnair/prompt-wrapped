@@ -2,6 +2,9 @@ import { useState, useMemo } from "react"
 import { parseClaude } from "./lib/parseClaude"
 import { computeMetrics } from "./lib/computeMetrics"
 import type { NormalizedData } from "./types"
+import { ActivityChart } from "./components/charts/ActivityChart"
+import { HourChart } from "./components/charts/HourChart"
+import { WeekdayChart } from "./components/charts/WeekdayChart"
 
 function App() {
   const [fileName, setFileName] = useState<string | null>(null)
@@ -114,6 +117,17 @@ function App() {
                 value={`${metrics.avgUserWordsPerMessage.toFixed(0)} words`}
               />
             </StatGrid>
+
+            <div>
+              <h2 className="text-sm uppercase tracking-wide text-slate-500 mb-3">Patterns</h2>
+              <div className="space-y-6">
+                <ActivityChart data={metrics.messagesByDay} />
+                <div className="grid md:grid-cols-2 gap-6">
+                  <HourChart data={metrics.messagesByHour} />
+                  <WeekdayChart data={metrics.messagesByWeekday} />
+                </div>
+              </div>
+            </div>
 
             <div className="text-center pt-6">
               <button
