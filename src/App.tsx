@@ -1,21 +1,36 @@
 import { useState } from "react"
+import { parseClaude } from "./lib/parseClaude"
+import type { NormalizedData } from "./types"
 
 function App() {
   const [fileName, setFileName] = useState<string | null>(null)
+  const [data, setData] = useState<NormalizedData | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
 
   const handleFile = (file: File) => {
     setFileName(file.name)
+    setError(null)
+    setData(null)
+
     const reader = new FileReader()
     reader.onload = (e) => {
       const text = e.target?.result as string
       try {
         const json = JSON.parse(text)
-        const convos = Array.isArray(json) ? json : json.conversations ?? []
-        console.log(`✓ Loaded ${convos.length} conversations`)
-        console.log("First conversation:", convos[0])
+
+        // Claude exports are an array at the top level.
+        if (!Array.isArray(json)) {
+          setError("This doesn't look like a Claude export. Expected an array of conversations.")
+          return
+        }
+
+        const parsed = parseClaude(json)
+        setData(parsed)
+        console.log("Parsed:", parsed)
       } catch (err) {
-        console.error("Not valid JSON:", err)
+        console.error(err)
+        setError("Could not parse this file as JSON.")
       }
     }
     reader.readAsText(file)
@@ -33,11 +48,16 @@ function App() {
     if (file) handleFile(file)
   }
 
+  const totalMessages = data?.conversations.reduce(
+    (sum, c) => sum + c.messages.length,
+    0
+  ) ?? 0
+
   return (
     <div className="min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center p-6">
       <h1 className="text-5xl font-bold mb-3">Prompt Wrapped 🎁</h1>
       <p className="text-slate-400 mb-10 text-center max-w-md">
-        See what you actually use AI for. 100% private — your data never leaves your browser.
+        See what you actually use AI for. 100% private, your data never leaves your browser.
       </p>
 
       <label
@@ -53,10 +73,24 @@ function App() {
         <p className="text-sm text-slate-500">or click to choose a file</p>
       </label>
 
-      {fileName && (
-        <p className="mt-6 text-green-400">
-          ✓ Loaded: {fileName} — open the browser console to see the data
-        </p>
+      {error && (
+        <p className="mt-6 text-red-400">⚠ {error}</p>
+      )}
+
+      {data && (
+        <div className="mt-10 bg-slate-800 rounded-xl p-6 max-w-lg w-full">
+          <p className="text-green-400 mb-4">✓ Loaded: {fileName}</p>
+          <div className="grid grid-cols-2 gap-4 text-center">
+            <div>
+              <p className="text-3xl font-bold">{data.conversations.length}</p>
+              <p className="text-sm text-slate-400">Conversations</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold">{totalMessages.toLocaleString()}</p>
+              <p className="text-sm text-slate-400">Messages</p>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
