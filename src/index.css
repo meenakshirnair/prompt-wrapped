@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+}
+
+html, body {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  @apply bg-ink-50 text-ink-900 transition-colors duration-300;
+}
+
+html.dark body {
+  @apply bg-ink-950 text-ink-50;
+}
+
+/* Make the whole page scroll smooth */
+html {
+  scroll-behavior: smooth;
+}
