@@ -7,10 +7,8 @@ import { HourChart } from "./components/charts/HourChart"
 import { WeekdayChart } from "./components/charts/WeekdayChart"
 import { TopicChart } from "./components/charts/TopicChart"
 import { WrappedCard } from "./components/WrappedCard"
-import { ThemeToggle } from "./components/ThemeToggle"
-import { GradientMesh } from "./components/GradientMesh"
-import { AnimatedNumber } from "./components/AnimatedNumber"
-import { TiltCard } from "./components/TiltCard"
+import { Masthead } from "./components/Masthead"
+import { FooterMeta } from "./components/FooterMeta"
 
 function App() {
   const [fileName, setFileName] = useState<string | null>(null)
@@ -55,146 +53,185 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Top bar */}
-      <header className="flex items-center justify-between px-6 md:px-10 py-5 max-w-6xl mx-auto">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-400 to-brand-600" />
-          <span className="font-bold text-lg">Prompt Wrapped</span>
-        </div>
-        <ThemeToggle />
-      </header>
+    <div className="relative min-h-screen">
+      <div className="max-w-5xl mx-auto px-6 md:px-12 pt-8 relative z-10">
+        <Masthead />
 
-      <main className="px-6 md:px-10 pb-20 max-w-6xl mx-auto">
-        {!metrics && <Landing isDragging={isDragging} setIsDragging={setIsDragging} handleDrop={handleDrop} handleSelect={handleSelect} error={error} />}
+        <main>
+          {!metrics && (
+            <Landing
+              isDragging={isDragging}
+              setIsDragging={setIsDragging}
+              handleDrop={handleDrop}
+              handleSelect={handleSelect}
+              error={error}
+            />
+          )}
 
-        {metrics && (
-          <div className="space-y-10 pt-4">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-pop-500 font-medium">
-                ✓ Loaded: {fileName}
-              </p>
-              <button
-                onClick={() => { setData(null); setFileName(null) }}
-                className="text-sm text-ink-500 hover:text-ink-900 dark:hover:text-ink-100 underline"
-              >
-                Load different file
-              </button>
-            </div>
-
-            <StatGrid title="The basics">
-              <Stat label="Conversations" value={metrics.totalConversations.toLocaleString()} animateFrom={metrics.totalConversations} />
-              <Stat label="Messages" value={metrics.totalMessages.toLocaleString()} animateFrom={metrics.totalMessages} />
-              <Stat label="You wrote" value={`${metrics.totalUserWords.toLocaleString()} words`} animateFrom={metrics.totalUserWords} />
-              <Stat label="AI wrote" value={`${metrics.totalAssistantWords.toLocaleString()} words`} animateFrom={metrics.totalAssistantWords} />
-            </StatGrid>
-
-            <StatGrid title="Your habits">
-              <Stat label="Active days" value={metrics.activeDays.toString()} animateFrom={metrics.activeDays} />
-              <Stat label="Current streak" value={`${metrics.currentStreak} days`} animateFrom={metrics.currentStreak} />
-              <Stat label="Longest streak" value={`${metrics.longestStreak} days`} animateFrom={metrics.longestStreak} />
-              <Stat label="Avg msgs per chat" value={metrics.avgMessagesPerConversation.toFixed(1)} animateFrom={metrics.avgMessagesPerConversation} />
-            </StatGrid>
-
-            <StatGrid title="Extremes">
-              <Stat label="First chat" value={metrics.firstMessageDate?.toLocaleDateString() ?? "—"} />
-              <Stat label="Last chat" value={metrics.lastMessageDate?.toLocaleDateString() ?? "—"} />
-              <Stat label="Longest chat" value={`${metrics.longestConversationLength} msgs`} sublabel={metrics.longestConversationTitle} animateFrom={metrics.longestConversationLength} />
-              <Stat label="Avg prompt length" value={`${metrics.avgUserWordsPerMessage.toFixed(0)} words`} animateFrom={metrics.avgUserWordsPerMessage} />
-            </StatGrid>
-
+          {metrics && (
             <div>
-              <h2 className="text-sm uppercase tracking-wider text-ink-500 font-semibold mb-4">Patterns</h2>
-              <div className="space-y-6">
+              <div className="flex items-center justify-between py-4 border-b border-divider dark:border-divider-dark text-[11px] uppercase tracking-editorial font-medium">
+                <span className="text-pop">● Loaded: {fileName}</span>
+                <button
+                  onClick={() => { setData(null); setFileName(null) }}
+                  className="text-subink dark:text-subink-dark hover:text-ink dark:hover:text-paper transition-colors"
+                >
+                  Load different →
+                </button>
+              </div>
+
+              <Section kicker="Part One" title="The numbers" page={2}>
+                <div className="grid md:grid-cols-2 gap-y-10 gap-x-16">
+                  <BigStat label="Conversations" value={metrics.totalConversations.toLocaleString()} />
+                  <BigStat label="Messages exchanged" value={metrics.totalMessages.toLocaleString()} />
+                  <BigStat label="Words you wrote" value={metrics.totalUserWords.toLocaleString()} />
+                  <BigStat label="Words written back" value={metrics.totalAssistantWords.toLocaleString()} />
+                </div>
+              </Section>
+
+              <Section kicker="Part Two" title="Your habits" page={3}>
+                <div className="grid md:grid-cols-2 gap-y-10 gap-x-16">
+                  <BigStat label="Active days" value={metrics.activeDays.toString()} />
+                  <BigStat label="Current streak" value={`${metrics.currentStreak} days`} />
+                  <BigStat label="Longest streak" value={`${metrics.longestStreak} days`} />
+                  <BigStat label="Avg messages per chat" value={metrics.avgMessagesPerConversation.toFixed(1)} />
+                </div>
+              </Section>
+
+              <Section kicker="Part Three" title="The extremes" page={4}>
+                <div className="grid md:grid-cols-2 gap-y-10 gap-x-16">
+                  <BigStat label="First conversation" value={metrics.firstMessageDate?.toLocaleDateString() ?? "—"} />
+                  <BigStat label="Most recent" value={metrics.lastMessageDate?.toLocaleDateString() ?? "—"} />
+                  <BigStat
+                    label="Longest single chat"
+                    value={`${metrics.longestConversationLength} msgs`}
+                    sublabel={metrics.longestConversationTitle}
+                  />
+                  <BigStat label="Average prompt length" value={`${metrics.avgUserWordsPerMessage.toFixed(0)} words`} />
+                </div>
+              </Section>
+
+              <Section kicker="Part Four" title="Patterns" page={5}>
                 <ActivityChart data={metrics.messagesByDay} />
                 <TopicChart data={metrics.topics} />
-                <div className="grid md:grid-cols-2 gap-6">
-                  <HourChart data={metrics.messagesByHour} />
-                  <WeekdayChart data={metrics.messagesByWeekday} />
-                </div>
-              </div>
-            </div>
+                <HourChart data={metrics.messagesByHour} />
+                <WeekdayChart data={metrics.messagesByWeekday} />
+              </Section>
 
-            <WrappedCard metrics={metrics} />
-          </div>
-        )}
-      </main>
+              <Section kicker="The wrap" title="Your year, on one page" page={6}>
+                <WrappedCard metrics={metrics} />
+              </Section>
+
+              <FooterMeta page={6} total={6} />
+            </div>
+          )}
+
+          {!metrics && <FooterMeta page={1} total={6} />}
+        </main>
+      </div>
+    </div>
+  )
+}
+
+function Section({
+  kicker,
+  title,
+  page,
+  children,
+}: {
+  kicker: string
+  title: string
+  page: number
+  children: React.ReactNode
+}) {
+  return (
+    <section className="pt-24 pb-8">
+      <div className="flex items-baseline justify-between mb-16 pb-4 border-b border-divider dark:border-divider-dark">
+        <div>
+          <p className="text-[11px] uppercase tracking-editorial text-subink dark:text-subink-dark font-medium mb-3">
+            {kicker}
+          </p>
+          <h2 className="font-display text-[48px] md:text-[56px] leading-none tracking-tight">
+            {title}
+          </h2>
+        </div>
+        <span className="font-mono text-[11px] tracking-widest text-subink dark:text-subink-dark">
+          Pg. {String(page).padStart(2, "0")}
+        </span>
+      </div>
+      {children}
+    </section>
+  )
+}
+
+function BigStat({ label, value, sublabel }: { label: string; value: string; sublabel?: string }) {
+  return (
+    <div>
+      <p className="text-[11px] uppercase tracking-editorial text-subink dark:text-subink-dark font-medium mb-3">
+        {label}
+      </p>
+      <p className="font-display text-[64px] leading-none tracking-tight mb-1">
+        {value}
+      </p>
+      {sublabel && (
+        <p className="text-sm text-subink dark:text-subink-dark italic mt-2 font-display">
+          "{sublabel}"
+        </p>
+      )}
     </div>
   )
 }
 
 function Landing({ isDragging, setIsDragging, handleDrop, handleSelect, error }: any) {
   return (
-    <div className="relative text-center pt-20">
-      <GradientMesh />
-      <p className="text-sm font-medium tracking-wider uppercase text-brand-500 mb-4">
-        Your year in AI
+    <div className="relative pt-20 pb-8">
+      <p className="text-[11px] uppercase tracking-editorial font-medium text-subink dark:text-subink-dark mb-6">
+        A zine about your year in AI
       </p>
-      <h1 className="font-display text-6xl md:text-7xl leading-tight mb-6">
-        See what you <em>actually</em><br />use AI for.
+
+      <h1 className="font-display text-[72px] md:text-[96px] leading-[0.95] tracking-tight mb-8 max-w-[720px]">
+        See what you <em className="text-pop italic">actually</em><br />
+        use AI for.
       </h1>
-      <p className="text-lg text-ink-500 max-w-xl mx-auto mb-12">
-        Upload your Claude conversation export and get a personalized dashboard of your AI usage patterns. 100% private, nothing leaves your browser.
+
+      <p className="font-display italic text-xl md:text-2xl text-subink dark:text-subink-dark max-w-xl leading-snug mb-14">
+        A small, private field guide to the questions you asked, the hours you kept, and the habits you didn't know you had.
       </p>
 
       <label
         onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
-        className={`block max-w-xl mx-auto border-2 border-dashed rounded-3xl p-16 cursor-pointer transition-all ${
+        className={`block max-w-xl border border-dashed cursor-pointer transition-all p-10 ${
           isDragging
-            ? "border-brand-400 bg-brand-50 dark:bg-brand-950 scale-[1.02]"
-            : "border-ink-300 dark:border-ink-700 hover:border-brand-400 hover:bg-ink-100/50 dark:hover:bg-ink-900/50"
+            ? "border-pop bg-pop/5"
+            : "border-ink dark:border-paper hover:border-pop"
         }`}
       >
         <input type="file" accept=".json" onChange={handleSelect} className="hidden" />
-        <div className="text-5xl mb-4">📥</div>
-        <p className="text-xl font-semibold mb-2">Drop your conversations.json</p>
-        <p className="text-sm text-ink-500">or click anywhere to browse</p>
+        <p className="text-[10px] uppercase tracking-editorial text-subink dark:text-subink-dark font-medium mb-2">
+          Enter →
+        </p>
+        <p className="font-display text-[28px] leading-tight mb-1">
+          Drop your conversations.json
+        </p>
+        <p className="text-sm text-subink dark:text-subink-dark">
+          Or click to browse. Nothing leaves your browser.
+        </p>
       </label>
 
-      {error && <p className="mt-6 text-red-500">⚠ {error}</p>}
+      {error && (
+        <p className="mt-6 text-pop text-sm">⚠ {error}</p>
+      )}
 
-      <div className="mt-12 text-sm text-ink-500">
-        <p className="mb-2">Don't have your export yet?</p>
-        <a href="https://claude.ai" target="_blank" rel="noreferrer" className="text-brand-500 hover:text-brand-600 underline">
-          Get it from claude.ai → Settings → Privacy → Export data
+      <p className="mt-14 text-xs text-subink dark:text-subink-dark max-w-lg leading-relaxed">
+        Don't have your export yet? Go to{" "}
+        <a href="https://claude.ai" target="_blank" rel="noreferrer" className="underline decoration-pop decoration-2 underline-offset-4 hover:text-pop transition-colors">
+          claude.ai
         </a>
-      </div>
-    </div>
-  )
-}
-
-function StatGrid({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <h2 className="text-sm uppercase tracking-wider text-ink-500 font-semibold mb-4">{title}</h2>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">{children}</div>
-    </div>
-  )
-}
-
-function Stat({ label, value, sublabel, animateFrom }: {
-  label: string
-  value: string
-  sublabel?: string
-  animateFrom?: number
-}) {
-  return (
-    <TiltCard className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-2xl p-5 transition-colors">
-      <p className="text-xs uppercase tracking-wider text-ink-500 font-medium mb-2">{label}</p>
-      <p className="text-3xl font-bold mb-1">
-        {animateFrom !== undefined ? (
-          <AnimatedNumber
-            value={animateFrom}
-            format={(n) => value.replace(/[\d,]+/, Math.round(n).toLocaleString())}
-          />
-        ) : (
-          value
-        )}
+        {" "}→ Settings → Privacy → Export data. You'll get an email with a zip file. The JSON lives inside.
       </p>
-      {sublabel && <p className="text-xs text-ink-500 truncate" title={sublabel}>{sublabel}</p>}
-    </TiltCard>
+    </div>
   )
 }
 

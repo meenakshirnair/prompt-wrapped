@@ -1,69 +1,62 @@
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell } from "recharts"
+import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import type { HourlyCount } from "../../types"
+import { ChartFrame } from "./ChartFrame"
 
 interface Props {
   data: HourlyCount[]
 }
 
 export function HourChart({ data }: Props) {
-  const formatted = data.map(d => ({
-    ...d,
-    label: formatHour(d.hour),
-  }))
-
-  // Find max to color peak hours differently
+  const formatted = data.map(d => ({ ...d, label: formatHour(d.hour) }))
   const maxCount = Math.max(...data.map(d => d.count))
 
   return (
-    <div className="bg-slate-800 rounded-xl p-6">
-      <h3 className="text-sm uppercase tracking-wide text-slate-400 mb-1">Hour of day</h3>
-      <p className="text-xs text-slate-500 mb-4">When you chat the most</p>
-
-      <ResponsiveContainer width="100%" height={220}>
-        <BarChart data={formatted} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+    <ChartFrame kicker="Fig. 03" title="Your hours" note="When, in the day, you reach for help.">
+      <ResponsiveContainer width="100%" height={200}>
+        <BarChart data={formatted} margin={{ top: 10, right: 0, left: -24, bottom: 0 }}>
           <XAxis
             dataKey="label"
-            stroke="#64748b"
-            fontSize={10}
+            stroke="currentColor"
+            strokeOpacity={0.35}
+            tick={{ fill: "currentColor", fillOpacity: 0.55, fontSize: 10, fontFamily: "ui-monospace, monospace" }}
             tickLine={false}
             axisLine={false}
-            interval={2}
+            interval={1}
           />
           <YAxis
-            stroke="#64748b"
-            fontSize={11}
+            stroke="currentColor"
+            strokeOpacity={0.35}
+            tick={{ fill: "currentColor", fillOpacity: 0.55, fontSize: 10, fontFamily: "ui-monospace, monospace" }}
             tickLine={false}
             axisLine={false}
           />
           <Tooltip
+            cursor={{ fill: "currentColor", fillOpacity: 0.06 }}
             contentStyle={{
-              backgroundColor: "#1e293b",
-              border: "1px solid #334155",
-              borderRadius: "8px",
-              fontSize: "13px",
+              backgroundColor: "#faf8f3",
+              border: "1px solid #1a1a1a",
+              borderRadius: 0,
+              fontSize: 12,
+              fontFamily: "ui-monospace, monospace",
+              padding: "6px 10px",
             }}
-            labelStyle={{ color: "#cbd5e1" }}
-            itemStyle={{ color: "#a855f7" }}
-            cursor={{ fill: "#334155", opacity: 0.3 }}
+            labelStyle={{ color: "#1a1a1a", fontWeight: 500 }}
+            itemStyle={{ color: "#1a1a1a" }}
           />
-          <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-            {formatted.map((entry, index) => (
-              <Cell
-                key={index}
-                fill={entry.count === maxCount ? "#ec4899" : "#a855f7"}
-              />
+          <Bar dataKey="count">
+            {formatted.map((entry, i) => (
+              <Cell key={i} fill={entry.count === maxCount ? "#ff5722" : "currentColor"} />
             ))}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
-    </div>
+    </ChartFrame>
   )
 }
 
-function formatHour(hour: number): string {
-  if (hour === 0) return "12a"
-  if (hour === 12) return "12p"
-  if (hour < 12) return `${hour}a`
-  return `${hour - 12}p`
+function formatHour(h: number): string {
+  if (h === 0) return "12am"
+  if (h === 12) return "12pm"
+  if (h < 12) return `${h}am`
+  return `${h - 12}pm`
 }

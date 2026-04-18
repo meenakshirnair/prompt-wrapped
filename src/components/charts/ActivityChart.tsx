@@ -1,65 +1,70 @@
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts"
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import type { DailyCount } from "../../types"
+import { ChartFrame } from "./ChartFrame"
 
 interface Props {
   data: DailyCount[]
 }
 
 export function ActivityChart({ data }: Props) {
-  // Format dates for display (e.g. "Apr 17")
   const formatted = data.map(d => ({
     ...d,
     label: new Date(d.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
   }))
 
   return (
-    <div className="bg-slate-800 rounded-xl p-6">
-      <h3 className="text-sm uppercase tracking-wide text-slate-400 mb-1">Activity over time</h3>
-      <p className="text-xs text-slate-500 mb-4">Messages per day</p>
-
-      <ResponsiveContainer width="100%" height={260}>
-        <AreaChart data={formatted} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+    <ChartFrame
+      kicker="Fig. 01"
+      title="Activity over time"
+      note="Messages sent each day. Every spike is a burst of curiosity."
+    >
+      <ResponsiveContainer width="100%" height={220}>
+        <AreaChart data={formatted} margin={{ top: 10, right: 4, left: -20, bottom: 0 }}>
           <defs>
-            <linearGradient id="activityGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#a855f7" stopOpacity={0.6} />
-              <stop offset="100%" stopColor="#a855f7" stopOpacity={0} />
+            <linearGradient id="activityFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="currentColor" stopOpacity={0.18} />
+              <stop offset="100%" stopColor="currentColor" stopOpacity={0.0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+          <CartesianGrid strokeDasharray="2 4" stroke="currentColor" strokeOpacity={0.12} vertical={false} />
           <XAxis
             dataKey="label"
-            stroke="#64748b"
-            fontSize={11}
+            stroke="currentColor"
+            strokeOpacity={0.35}
+            tick={{ fill: "currentColor", fillOpacity: 0.55, fontSize: 10, fontFamily: "ui-monospace, monospace" }}
             tickLine={false}
             axisLine={false}
             interval="preserveStartEnd"
-            minTickGap={40}
+            minTickGap={60}
           />
           <YAxis
-            stroke="#64748b"
-            fontSize={11}
+            stroke="currentColor"
+            strokeOpacity={0.35}
+            tick={{ fill: "currentColor", fillOpacity: 0.55, fontSize: 10, fontFamily: "ui-monospace, monospace" }}
             tickLine={false}
             axisLine={false}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: "#1e293b",
-              border: "1px solid #334155",
-              borderRadius: "8px",
-              fontSize: "13px",
+              backgroundColor: "#faf8f3",
+              border: "1px solid #1a1a1a",
+              borderRadius: 0,
+              fontSize: 12,
+              fontFamily: "ui-monospace, monospace",
+              padding: "6px 10px",
             }}
-            labelStyle={{ color: "#cbd5e1" }}
-            itemStyle={{ color: "#a855f7" }}
+            labelStyle={{ color: "#1a1a1a", fontWeight: 500 }}
+            itemStyle={{ color: "#1a1a1a" }}
           />
           <Area
             type="monotone"
             dataKey="count"
-            stroke="#a855f7"
-            strokeWidth={2}
-            fill="url(#activityGradient)"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            fill="url(#activityFill)"
           />
         </AreaChart>
       </ResponsiveContainer>
-    </div>
+    </ChartFrame>
   )
 }
