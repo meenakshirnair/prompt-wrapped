@@ -40,7 +40,9 @@ Download a polished PNG of your year in AI — perfect for sharing on LinkedIn, 
 
 ## 🚀 Try it
 
-Coming soon at a live URL. For now, run it locally in 30 seconds (see below).
+**[promptwrapped.vercel.app](https://prompt-wrapped.vercel.app/)**
+
+Drag your Claude export, see your year in AI. Takes under 10 seconds.
 
 ### How to get your Claude export
 1. Go to [claude.ai](https://claude.ai) → Settings → Privacy → Export data
