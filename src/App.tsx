@@ -5,6 +5,8 @@ import type { NormalizedData } from "./types"
 import { ActivityChart } from "./components/charts/ActivityChart"
 import { HourChart } from "./components/charts/HourChart"
 import { WeekdayChart } from "./components/charts/WeekdayChart"
+import { TopicChart } from "./components/charts/TopicChart"
+import { WrappedCard } from "./components/WrappedCard"
 
 function App() {
   const [fileName, setFileName] = useState<string | null>(null)
@@ -14,7 +16,6 @@ function App() {
 
   // Compute metrics whenever data changes (memoized so it doesn't recompute on every render)
   const metrics = useMemo(() => data ? computeMetrics(data) : null, [data])
-  if (metrics) console.log("Metrics:", metrics)
 
   const handleFile = (file: File) => {
     setFileName(file.name)
@@ -122,12 +123,15 @@ function App() {
               <h2 className="text-sm uppercase tracking-wide text-slate-500 mb-3">Patterns</h2>
               <div className="space-y-6">
                 <ActivityChart data={metrics.messagesByDay} />
+                <TopicChart data={metrics.topics} />
                 <div className="grid md:grid-cols-2 gap-6">
                   <HourChart data={metrics.messagesByHour} />
                   <WeekdayChart data={metrics.messagesByWeekday} />
                 </div>
               </div>
             </div>
+
+            <WrappedCard metrics={metrics} />
 
             <div className="text-center pt-6">
               <button

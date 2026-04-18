@@ -71,4 +71,25 @@ export interface Metrics {
   // Streaks
   currentStreak: number
   longestStreak: number
+
+  topics: TopicCount[]
+}
+
+// Topic classification
+
+export type Topic =
+  | "coding"
+  | "writing"
+  | "learning"
+  | "career"
+  | "planning"
+  | "data"
+  | "personal"
+  | "other"
+
+export interface TopicCount {
+  topic: Topic
+  label: string    // pretty display label
+  count: number
+  percentage: number
 }

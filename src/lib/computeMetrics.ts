@@ -4,7 +4,10 @@ import type {
   DailyCount,
   HourlyCount,
   WeekdayCount,
+  TopicCount,
+  Topic,
 } from "../types"
+import { classifyTopic, TOPIC_LABELS } from "./classifyTopic"
 
 /**
  * Takes normalized data and returns all computed metrics.
@@ -70,6 +73,22 @@ export function computeMetrics(data: NormalizedData): Metrics {
     if (c.messages.length > longestConvo.messages.length) longestConvo = c
   }
 
+  // Topic classification
+  const topicMap = new Map<Topic, number>()
+  for (const msg of userMessages) {
+    const topic = classifyTopic(msg.content)
+    topicMap.set(topic, (topicMap.get(topic) ?? 0) + 1)
+  }
+
+  const topics: TopicCount[] = Array.from(topicMap.entries())
+    .map(([topic, count]) => ({
+      topic,
+      label: TOPIC_LABELS[topic],
+      count,
+      percentage: userMessages.length > 0 ? (count / userMessages.length) * 100 : 0,
+    }))
+    .sort((a, b) => b.count - a.count)
+
   return {
     totalConversations: conversations.length,
     totalMessages: allMessages.length,
@@ -96,6 +115,8 @@ export function computeMetrics(data: NormalizedData): Metrics {
 
     currentStreak,
     longestStreak,
+
+    topics,
   }
 }
 
@@ -164,5 +185,6 @@ function emptyMetrics(): Metrics {
     messagesByWeekday: [],
     currentStreak: 0,
     longestStreak: 0,
+    topics: [],
   }
 }
