@@ -241,16 +241,20 @@ function Landing({ isDragging, setIsDragging, handleDrop, handleSelect, error }:
   return (
     <div className="relative pt-20 pb-8">
       <p className="text-[11px] uppercase tracking-editorial font-medium text-subink dark:text-subink-dark mb-6">
-        A zine about your year in AI
+        Your year in AI · Issue Nº 01
       </p>
 
-      <h1 className="font-display text-[72px] md:text-[96px] leading-[0.95] tracking-tight mb-8 max-w-[720px]">
+      <h1 className="font-display text-[64px] md:text-[88px] leading-[0.95] tracking-tight mb-8 max-w-[760px]">
         See what you <em className="text-pop italic">actually</em><br />
         use AI for.
       </h1>
 
-      <p className="font-display italic text-xl md:text-2xl text-subink dark:text-subink-dark max-w-xl leading-snug mb-14">
-        A small, private field guide to the questions you asked, the hours you kept, and the habits you didn't know you had.
+      <p className="font-display italic text-xl md:text-2xl text-ink dark:text-paper max-w-2xl leading-snug mb-6">
+        Upload your ChatGPT or Claude export. Get back a personalized magazine of your year — your top topics, your hours, your streaks, and a downloadable cover to share.
+      </p>
+
+      <p className="text-sm text-subink dark:text-subink-dark max-w-xl leading-relaxed mb-12">
+        Free. Takes 10 seconds. Nothing leaves your browser — no uploads, no accounts, no tracking. <a href="https://github.com/meenakshirnair/prompt-wrapped" target="_blank" rel="noreferrer" className="underline decoration-pop decoration-2 underline-offset-4 hover:text-pop transition-colors">See the code</a>.
       </p>
 
       <label
@@ -265,16 +269,16 @@ function Landing({ isDragging, setIsDragging, handleDrop, handleSelect, error }:
       >
         <input type="file" accept=".json" onChange={handleSelect} className="hidden" />
         <p className="text-[10px] uppercase tracking-editorial text-subink dark:text-subink-dark font-medium mb-2">
-          Enter →
+          Step 01 →
         </p>
         <p className="font-display text-[28px] leading-tight mb-1">
           Drop your conversations.json
         </p>
-        <p className="text-[10px] uppercase tracking-editorial text-subink dark:text-subink-dark font-medium mt-3">
-          Works with Claude or ChatGPT
+        <p className="text-sm text-subink dark:text-subink-dark mb-3">
+          Or click to browse. We'll do the rest.
         </p>
-        <p className="text-sm text-subink dark:text-subink-dark">
-          Or click to browse. Nothing leaves your browser.
+        <p className="text-[10px] uppercase tracking-editorial text-subink dark:text-subink-dark font-medium">
+          Works with Claude or ChatGPT
         </p>
       </label>
 
@@ -282,17 +286,64 @@ function Landing({ isDragging, setIsDragging, handleDrop, handleSelect, error }:
         <p className="mt-6 text-pop text-sm">⚠ {error}</p>
       )}
 
-      <p className="mt-14 text-xs text-subink dark:text-subink-dark max-w-lg leading-relaxed">
-        Don't have your export yet? For Claude, go to{" "}
-        <a href="https://claude.ai" target="_blank" rel="noreferrer" className="underline decoration-pop decoration-2 underline-offset-4 hover:text-pop transition-colors">
-          claude.ai
-        </a>
-        {" "}→ Settings → Privacy → Export data. For ChatGPT, go to{" "}
-        <a href="https://chatgpt.com" target="_blank" rel="noreferrer" className="underline decoration-pop decoration-2 underline-offset-4 hover:text-pop transition-colors">
-          chatgpt.com
-        </a>
-        {" "}→ Settings → Data Controls → Export. You'll get an email with a zip; the JSON lives inside.
-      </p>
+      {/* How to get the export */}
+      <div className="mt-16 grid md:grid-cols-2 gap-x-12 gap-y-8 max-w-3xl">
+        <div>
+          <p className="text-[10px] uppercase tracking-editorial text-subink dark:text-subink-dark font-medium mb-3">
+            Don't have a Claude export?
+          </p>
+          <p className="text-sm leading-relaxed">
+            Go to{" "}
+            <a href="https://claude.ai" target="_blank" rel="noreferrer" className="underline decoration-pop decoration-2 underline-offset-4 hover:text-pop transition-colors">
+              claude.ai
+            </a>
+            {" "}→ Settings → Privacy → Export data. You'll get an email with a zip file. The <span className="font-mono text-xs">conversations.json</span> lives inside.
+          </p>
+        </div>
+        <div>
+          <p className="text-[10px] uppercase tracking-editorial text-subink dark:text-subink-dark font-medium mb-3">
+            Don't have a ChatGPT export?
+          </p>
+          <p className="text-sm leading-relaxed">
+            Go to{" "}
+            <a href="https://chatgpt.com" target="_blank" rel="noreferrer" className="underline decoration-pop decoration-2 underline-offset-4 hover:text-pop transition-colors">
+              chatgpt.com
+            </a>
+            {" "}→ Settings → Data Controls → Export. Email arrives within an hour. Same drill: unzip, find <span className="font-mono text-xs">conversations.json</span>, drop it in.
+          </p>
+        </div>
+      </div>
+
+      {/* What you'll see preview */}
+      <div className="mt-16 pt-8 border-t border-divider dark:border-divider-dark">
+        <p className="text-[10px] uppercase tracking-editorial text-subink dark:text-subink-dark font-medium mb-4">
+          Inside the issue
+        </p>
+        <div className="grid md:grid-cols-2 gap-y-3 gap-x-8 max-w-3xl">
+          <PreviewLine number="01" title="The cover" desc="Hero image, downloadable as PNG" />
+          <PreviewLine number="02" title="The scope" desc="Conversations, messages, words" />
+          <PreviewLine number="03" title="Your hours" desc="When you ask, by day and by hour" />
+          <PreviewLine number="04" title="Your topics" desc="What you actually used AI for" />
+          <PreviewLine number="05" title="The extremes" desc="Firsts, lasts, longest streaks" />
+          <PreviewLine number="06" title="The wrap" desc="One-page summary, shareable" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function PreviewLine({ number, title, desc }: { number: string; title: string; desc: string }) {
+  return (
+    <div className="flex items-baseline gap-3">
+      <span className="font-mono text-[10px] tracking-widest text-subink dark:text-subink-dark">
+        {number}
+      </span>
+      <div>
+        <span className="font-display text-base">{title}</span>
+        <span className="text-sm text-subink dark:text-subink-dark italic font-display">
+          {" "}— {desc}
+        </span>
+      </div>
     </div>
   )
 }

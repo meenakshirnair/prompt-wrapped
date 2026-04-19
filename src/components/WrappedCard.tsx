@@ -9,6 +9,8 @@ interface Props {
 export function WrappedCard({ metrics }: Props) {
   const cardRef = useRef<HTMLDivElement>(null)
   const [downloading, setDownloading] = useState(false)
+  const [hasDownloaded, setHasDownloaded] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   const topTopic = metrics.topics[0]
   const peakHour = metrics.messagesByHour.reduce(
@@ -18,6 +20,17 @@ export function WrappedCard({ metrics }: Props) {
   const yearRange = metrics.firstMessageDate && metrics.lastMessageDate
     ? `${metrics.firstMessageDate.getFullYear()} – ${metrics.lastMessageDate.getFullYear()}`
     : "MMXXVI"
+
+  // The suggested caption — auto-generated from user's data, copyable
+  const caption = `My year in AI, in numbers:
+
+${metrics.totalMessages.toLocaleString()} messages across ${metrics.totalConversations} conversations.
+${metrics.totalUserWords.toLocaleString()} words written.
+Most-asked topic: ${topTopic?.label ?? "—"} (${topTopic?.percentage.toFixed(0) ?? "0"}%).
+
+Built a free tool to make this — runs entirely in your browser, works with both Claude and ChatGPT exports.
+
+Try yours: https://prompt-wrapped.vercel.app`
 
   const handleDownload = async () => {
     if (!cardRef.current) return
@@ -30,7 +43,7 @@ export function WrappedCard({ metrics }: Props) {
       const height = Math.ceil(rect.height)
 
       const dataUrl = await toPng(node, {
-        backgroundColor: "#f2eee3",  // slightly warmer than paper for the download bg
+        backgroundColor: "#f2eee3",
         pixelRatio: 2,
         canvasWidth: width * 2,
         canvasHeight: height * 2,
@@ -42,10 +55,27 @@ export function WrappedCard({ metrics }: Props) {
       link.download = "prompt-wrapped.png"
       link.href = dataUrl
       link.click()
+      setHasDownloaded(true)
     } catch (err) {
       console.error("Export failed:", err)
     } finally {
       setDownloading(false)
+    }
+  }
+
+  const handleShareLinkedIn = () => {
+    const url = "https://prompt-wrapped.vercel.app"
+    const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
+    window.open(shareUrl, "_blank", "noopener,noreferrer")
+  }
+
+  const handleCopyCaption = async () => {
+    try {
+      await navigator.clipboard.writeText(caption)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error("Copy failed:", err)
     }
   }
 
@@ -98,7 +128,7 @@ export function WrappedCard({ metrics }: Props) {
             The cover story
           </p>
 
-          {/* Hero headline — the one-line pitch of the whole year */}
+          {/* Hero headline */}
           <h1 style={{
             fontFamily: "'Instrument Serif', Georgia, serif",
             fontSize: "64px",
@@ -136,7 +166,7 @@ export function WrappedCard({ metrics }: Props) {
             <Fact label="Avg. prompt" value={`${Math.round(metrics.avgUserWordsPerMessage)} words`} />
           </div>
 
-          {/* Pull quote — the top topic */}
+          {/* Pull quote */}
           {topTopic && (
             <div style={{
               marginTop: "36px",
@@ -187,15 +217,45 @@ export function WrappedCard({ metrics }: Props) {
         </div>
       </div>
 
-      {/* Download button — outside the card */}
-      <div className="text-center mt-8">
-        <button
-          onClick={handleDownload}
-          disabled={downloading}
-          className="text-[11px] uppercase tracking-editorial font-medium border border-ink dark:border-paper px-6 py-3 hover:bg-ink hover:text-paper dark:hover:bg-paper dark:hover:text-ink transition-colors disabled:opacity-50"
-        >
-          {downloading ? "Preparing..." : "Download cover →"}
-        </button>
+      {/* Action zone — outside the card */}
+      <div className="mt-8 flex flex-col items-center gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <button
+            onClick={handleDownload}
+            disabled={downloading}
+            className="text-[11px] uppercase tracking-editorial font-medium border border-ink dark:border-paper px-6 py-3 hover:bg-ink hover:text-paper dark:hover:bg-paper dark:hover:text-ink transition-colors disabled:opacity-50"
+          >
+            {downloading ? "Preparing..." : hasDownloaded ? "Download again ↻" : "Download cover →"}
+          </button>
+
+            <button
+              onClick={handleShareLinkedIn}
+              className="text-[11px] uppercase tracking-editorial font-medium border border-pop bg-pop text-paper px-6 py-3 hover:bg-ink hover:border-ink transition-colors"
+            >
+              Share to LinkedIn ↗
+            </button>
+        </div>
+
+        {/* After-download caption helper */}
+          <div className="mt-6 max-w-xl w-full border border-divider dark:border-divider-dark p-6">
+            <div className="flex items-baseline justify-between mb-3">
+              <p className="text-[10px] uppercase tracking-editorial text-subink dark:text-subink-dark font-medium">
+                Suggested caption
+              </p>
+              <button
+                onClick={handleCopyCaption}
+                className="text-[10px] uppercase tracking-editorial text-subink dark:text-subink-dark hover:text-pop transition-colors"
+              >
+                {copied ? "Copied ✓" : "Copy →"}
+              </button>
+            </div>
+            <p className="font-display text-base leading-relaxed text-ink dark:text-paper whitespace-pre-line">
+              {caption}
+            </p>
+            <p className="mt-4 text-[10px] uppercase tracking-editorial text-subink dark:text-subink-dark">
+              Download the cover, then share to LinkedIn with this caption.
+            </p>
+          </div>
       </div>
     </div>
   )
