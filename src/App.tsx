@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react"
-import { parseClaude } from "./lib/parseClaude"
 import { computeMetrics } from "./lib/computeMetrics"
 import type { NormalizedData } from "./types"
 import { ActivityChart } from "./components/charts/ActivityChart"
@@ -9,6 +8,7 @@ import { TopicChart } from "./components/charts/TopicChart"
 import { WrappedCard } from "./components/WrappedCard"
 import { Masthead } from "./components/Masthead"
 import { FooterMeta } from "./components/FooterMeta"
+import { detectAndParse } from "./lib/detectAndParse"
 
 function App() {
   const [fileName, setFileName] = useState<string | null>(null)
@@ -27,14 +27,11 @@ function App() {
       const text = e.target?.result as string
       try {
         const json = JSON.parse(text)
-        if (!Array.isArray(json)) {
-          setError("This doesn't look like a Claude export. Expected an array of conversations.")
-          return
-        }
-        setData(parseClaude(json))
+        const parsed = detectAndParse(json)
+        setData(parsed)
       } catch (err) {
         console.error(err)
-        setError("Could not parse this file as JSON.")
+        setError(err instanceof Error ? err.message : "Could not read this file.")
       }
     }
     reader.readAsText(file)
@@ -215,6 +212,9 @@ function Landing({ isDragging, setIsDragging, handleDrop, handleSelect, error }:
         <p className="font-display text-[28px] leading-tight mb-1">
           Drop your conversations.json
         </p>
+        <p className="text-[10px] uppercase tracking-editorial text-subink dark:text-subink-dark font-medium mt-3">
+          Works with Claude or ChatGPT
+        </p>
         <p className="text-sm text-subink dark:text-subink-dark">
           Or click to browse. Nothing leaves your browser.
         </p>
@@ -225,11 +225,15 @@ function Landing({ isDragging, setIsDragging, handleDrop, handleSelect, error }:
       )}
 
       <p className="mt-14 text-xs text-subink dark:text-subink-dark max-w-lg leading-relaxed">
-        Don't have your export yet? Go to{" "}
+        Don't have your export yet? For Claude, go to{" "}
         <a href="https://claude.ai" target="_blank" rel="noreferrer" className="underline decoration-pop decoration-2 underline-offset-4 hover:text-pop transition-colors">
           claude.ai
         </a>
-        {" "}→ Settings → Privacy → Export data. You'll get an email with a zip file. The JSON lives inside.
+        {" "}→ Settings → Privacy → Export data. For ChatGPT, go to{" "}
+        <a href="https://chatgpt.com" target="_blank" rel="noreferrer" className="underline decoration-pop decoration-2 underline-offset-4 hover:text-pop transition-colors">
+          chatgpt.com
+        </a>
+        {" "}→ Settings → Data Controls → Export. You'll get an email with a zip; the JSON lives inside.
       </p>
     </div>
   )
