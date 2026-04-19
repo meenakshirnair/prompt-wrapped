@@ -130,8 +130,10 @@ function toDayKey(d: Date): string {
 
 /**
  * Given a sorted array of YYYY-MM-DD strings representing days on which
- * the user was active, return the longest streak ever and the current streak
- * (counting back from today).
+ * the user was active, return:
+ *   - longestStreak: longest consecutive-day run ever
+ *   - currentStreak: most recent run, anchored at the latest active day
+ *     (not "today" — exports lag behind real-time chats)
  */
 function computeStreaks(sortedDayKeys: string[]): { currentStreak: number; longestStreak: number } {
   if (sortedDayKeys.length === 0) return { currentStreak: 0, longestStreak: 0 }
@@ -153,10 +155,11 @@ function computeStreaks(sortedDayKeys: string[]): { currentStreak: number; longe
     }
   }
 
-  // Current streak (counting back from today)
-  let current = 0
-  const today = new Date()
-  let cursor = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+  // Current streak: count consecutive days backward from the latest active day
+  let current = 1
+  const latest = new Date(sortedDayKeys[sortedDayKeys.length - 1])
+  let cursor = new Date(latest.getFullYear(), latest.getMonth(), latest.getDate())
+  cursor.setDate(cursor.getDate() - 1)
   while (daySet.has(toDayKey(cursor))) {
     current++
     cursor.setDate(cursor.getDate() - 1)

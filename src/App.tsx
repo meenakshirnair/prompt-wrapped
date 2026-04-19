@@ -89,7 +89,7 @@ function App() {
               <Section kicker="Part Two" title="Your habits" page={3}>
                 <div className="grid md:grid-cols-2 gap-y-10 gap-x-16">
                   <BigStat label="Active days" value={metrics.activeDays.toString()} />
-                  <BigStat label="Current streak" value={`${metrics.currentStreak} days`} />
+                  <BigStat label="Most recent streak" value={`${metrics.currentStreak} days`} />
                   <BigStat label="Longest streak" value={`${metrics.longestStreak} days`} />
                   <BigStat label="Avg messages per chat" value={metrics.avgMessagesPerConversation.toFixed(1)} />
                 </div>
