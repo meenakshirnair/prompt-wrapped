@@ -77,7 +77,13 @@ function App() {
                 </button>
               </div>
 
-              <Section kicker="Part One" title="The numbers" page={2}>
+              {/* PART ONE — THE SCOPE */}
+              <Section
+                kicker="Part One"
+                title="The scope"
+                page={2}
+                lede="The total weight of a year's worth of asking."
+              >
                 <div className="grid md:grid-cols-2 gap-y-10 gap-x-16">
                   <BigStat label="Conversations" value={metrics.totalConversations.toLocaleString()} />
                   <BigStat label="Messages exchanged" value={metrics.totalMessages.toLocaleString()} />
@@ -86,36 +92,81 @@ function App() {
                 </div>
               </Section>
 
-              <Section kicker="Part Two" title="Your habits" page={3}>
-                <div className="grid md:grid-cols-2 gap-y-10 gap-x-16">
+              {/* PART TWO — YOUR HOURS */}
+              <Section
+                kicker="Part Two"
+                title="Your hours"
+                page={3}
+                lede="The rhythm of when you reach out, broken down by day, week, and time."
+              >
+                <div className="grid md:grid-cols-3 gap-y-10 gap-x-16 mb-12">
                   <BigStat label="Active days" value={metrics.activeDays.toString()} />
                   <BigStat label="Most recent streak" value={`${metrics.currentStreak} days`} />
                   <BigStat label="Longest streak" value={`${metrics.longestStreak} days`} />
-                  <BigStat label="Avg messages per chat" value={metrics.avgMessagesPerConversation.toFixed(1)} />
                 </div>
+                <ActivityChart data={metrics.messagesByDay} />
+                <HourChart data={metrics.messagesByHour} />
+                <WeekdayChart data={metrics.messagesByWeekday} />
               </Section>
 
-              <Section kicker="Part Three" title="The extremes" page={4}>
+              {/* PART THREE — YOUR TOPICS */}
+              <Section
+                kicker="Part Three"
+                title="Your topics"
+                page={4}
+                lede="What you actually asked about, sorted by how often it came up."
+              >
+                {metrics.topics[0] && (
+                  <div className="grid md:grid-cols-2 gap-y-10 gap-x-16 mb-12">
+                    <BigStat
+                      label="What you asked about most"
+                      value={metrics.topics[0].label}
+                      sublabel={`${metrics.topics[0].percentage.toFixed(0)}% of all messages`}
+                    />
+                    <BigStat
+                      label="Avg. messages per chat"
+                      value={metrics.avgMessagesPerConversation.toFixed(1)}
+                    />
+                  </div>
+                )}
+                <TopicChart data={metrics.topics} />
+              </Section>
+
+              {/* PART FOUR — THE EXTREMES */}
+              <Section
+                kicker="Part Four"
+                title="The extremes"
+                page={5}
+                lede="The firsts, the lasts, and the outliers."
+              >
                 <div className="grid md:grid-cols-2 gap-y-10 gap-x-16">
-                  <BigStat label="First conversation" value={metrics.firstMessageDate?.toLocaleDateString() ?? "—"} />
-                  <BigStat label="Most recent" value={metrics.lastMessageDate?.toLocaleDateString() ?? "—"} />
+                  <BigStat
+                    label="First conversation"
+                    value={metrics.firstMessageDate?.toLocaleDateString() ?? "—"}
+                  />
+                  <BigStat
+                    label="Most recent"
+                    value={metrics.lastMessageDate?.toLocaleDateString() ?? "—"}
+                  />
                   <BigStat
                     label="Longest single chat"
                     value={`${metrics.longestConversationLength} msgs`}
                     sublabel={metrics.longestConversationTitle}
                   />
-                  <BigStat label="Average prompt length" value={`${metrics.avgUserWordsPerMessage.toFixed(0)} words`} />
+                  <BigStat
+                    label="Average prompt length"
+                    value={`${metrics.avgUserWordsPerMessage.toFixed(0)} words`}
+                  />
                 </div>
               </Section>
 
-              <Section kicker="Part Four" title="Patterns" page={5}>
-                <ActivityChart data={metrics.messagesByDay} />
-                <TopicChart data={metrics.topics} />
-                <HourChart data={metrics.messagesByHour} />
-                <WeekdayChart data={metrics.messagesByWeekday} />
-              </Section>
-
-              <Section kicker="The wrap" title="Your year, on one page" page={6}>
+              {/* THE WRAP */}
+              <Section
+                kicker="The wrap"
+                title="Your year, on one page"
+                page={6}
+                lede="The cover. Yours to share."
+              >
                 <WrappedCard metrics={metrics} />
               </Section>
 
@@ -133,24 +184,31 @@ function App() {
 function Section({
   kicker,
   title,
+  lede,
   page,
   children,
 }: {
   kicker: string
   title: string
+  lede?: string
   page: number
   children: React.ReactNode
 }) {
   return (
     <section className="pt-24 pb-8">
-      <div className="flex items-baseline justify-between mb-16 pb-4 border-b border-divider dark:border-divider-dark">
-        <div>
+      <div className="flex items-baseline justify-between mb-12 pb-4 border-b border-divider dark:border-divider-dark">
+        <div className="flex-1 max-w-xl">
           <p className="text-[11px] uppercase tracking-editorial text-subink dark:text-subink-dark font-medium mb-3">
             {kicker}
           </p>
-          <h2 className="font-display text-[48px] md:text-[56px] leading-none tracking-tight">
+          <h2 className="font-display text-[48px] md:text-[56px] leading-none tracking-tight mb-3">
             {title}
           </h2>
+          {lede && (
+            <p className="font-display italic text-base md:text-lg text-subink dark:text-subink-dark leading-snug max-w-md">
+              {lede}
+            </p>
+          )}
         </div>
         <span className="font-mono text-[11px] tracking-widest text-subink dark:text-subink-dark">
           Pg. {String(page).padStart(2, "0")}
