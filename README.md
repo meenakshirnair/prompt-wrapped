@@ -107,14 +107,14 @@ Have an idea? [Open an issue.](https://github.com/meenakshirnair/prompt-wrapped/
 
 ## License
 
-MIT — fork it, ship your own version, make it yours.
+MIT - fork it, ship your own version, make it yours.
 
 ---
 
 ## Built by
 
-**[Meenakshi Rajeev Nair](https://www.linkedin.com/in/meenakshi-rajeev-nair-43301b248/)** — MSBA grad with 2.5 years of AI engineering at EY, now pivoting into Product Analytics and AI/ML Business Analyst roles.
+**[Meenakshi Rajeev Nair](https://www.linkedin.com/in/meenakshi-rajeev-nair-43301b248/)** - MSBA grad with 2.5 years of AI engineering at EY, now pivoting into Product Analytics and AI/ML Business Analyst roles.
 
-This project sits at the intersection of both — applied AI engineering plus the analytics thinking I picked up at W. P. Carey. Built end-to-end in a week, including the data parsing, the design system, and the launch.
+This project sits at the intersection of both applied AI engineering plus the analytics thinking I picked up at W. P. Carey. Built end-to-end in a week, including the data parsing, the design system, and the launch.
 
 If you're hiring for Product Analyst, AI BA, or similar roles, I'd love to talk.
