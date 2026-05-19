@@ -1,66 +1,85 @@
 # Prompt Wrapped 🎁
 
-> See what you actually use AI for. 100% private, your data never leaves your browser.
+> A zine about your year in AI. Upload your ChatGPT or Claude export, get a personalized magazine of your usage patterns — your top topics, your hours, your streaks, and a downloadable cover.
 
-![Dashboard](./docs/screenshots/hero.png) 
-![Dashboard](./docs/screenshots/hero1.png)
-![Dashboard](./docs/screenshots/hero2.png)
+**[Try it now →](https://prompt-wrapped.vercel.app)**
 
-Upload your ChatGPT or Claude conversation export and get a personalized dashboard showing your AI usage patterns — when you chat, what you chat about, your longest streaks, and a shareable "Wrapped" card like Spotify's year-end summary.
+![Landing page](./docs/screenshots/hero.png)
 
-## 🔒 Privacy first
+---
 
-Your export contains every message you've ever sent. That's personal. So **Prompt Wrapped does not have a backend.** All parsing, analytics, and chart rendering run in your browser. Nothing is uploaded, logged, or stored anywhere.
+## Why I built this
 
-Don't take my word for it. [Read the code](./src/lib/parseClaude.ts).
+I'd been using Claude and ChatGPT every day for a year — for job applications, side projects, learning, life advice. I had no idea what *I* actually used AI for.
 
-## ✨ Features
+So I built a tool that does Spotify Wrapped, but for your AI conversations. Upload your export, get a personalized magazine showing your patterns. What you ask about, when you ask, how often, your longest deep-dives.
 
-- **Drag-and-drop upload** — drop in `conversations.json` from your export, done
-- **Works with Claude today, ChatGPT support coming** 
-- **Rich analytics dashboard** — totals, time patterns, streaks, hour-of-day, day-of-week
-- **Topic classification** — see what you actually use AI for (career, coding, writing, etc.)
-- **Downloadable Wrapped card** — one-click PNG export for sharing
+It runs entirely in your browser. Nothing uploads, no accounts, no tracking.
 
-## 📊 What you'll see
+---
 
-### Your stats at a glance
-Totals, streaks, averages, and extremes — all on one page.
+## What's in the issue
 
-### When you use AI
-Activity timeline, hour-of-day, and weekday rhythm.
+The output is laid out like a magazine, six sections deep.
 
-### What you use AI for
-Topic breakdown based on keyword classification across 8 categories.
+### Part One — The scope
+The total weight of a year. Conversations, messages, words you wrote, words written back.
 
-### Your Wrapped card
-![Wrapped Card](./docs/screenshots/wrapped.png)
+![The scope](./docs/screenshots/scope.png)
 
-Download a polished PNG of your year in AI — perfect for sharing on LinkedIn, Twitter, or just keeping as a yearly snapshot.
+### Part Two — Your hours
+The rhythm of when you reach for AI. Active days, streaks, plus charts breaking down activity by day, time of day, and weekday.
 
-## 🚀 Try it
+![Patterns](./docs/screenshots/patterns.png)
 
-**[promptwrapped.vercel.app](https://prompt-wrapped.vercel.app/)**
+### Part Three — Your topics
+What you actually used AI for. A keyword classifier sorts your messages into eight categories: coding, writing, career, data, learning, planning, personal, other.
 
-Drag your Claude export, see your year in AI. Takes under 10 seconds.
+![Topics](./docs/screenshots/topics.png)
 
-### How to get your Claude export
+### Part Four — The extremes
+Firsts, lasts, longest single conversations, average prompt length.
+
+![Extremes](./docs/screenshots/extremes.png)
+
+### The cover
+A downloadable PNG of your year — designed to share. One-click LinkedIn share with an auto-generated caption based on your data.
+
+![The cover](./docs/screenshots/cover.png)
+
+---
+
+## 🔒 Privacy
+
+Your export contains every conversation you've ever had. That's personal. So **Prompt Wrapped has no backend.** All parsing and analytics happen in your browser, locally.
+
+Don't take my word for it — [read the parsers](./src/lib/parseClaude.ts).
+
+---
+
+## How to use it
+
+### Get your Claude export
 1. Go to [claude.ai](https://claude.ai) → Settings → Privacy → Export data
 2. Wait for the email (usually within minutes)
-3. Unzip the file and grab `conversations.json`
-4. Drag it into Prompt Wrapped
+3. Unzip → grab `conversations.json`
+4. Drop it into Prompt Wrapped
 
-### How to get your ChatGPT export
-1. Go to [chatgpt.com](https://chatgpt.com) → Settings → Data Controls → Export data
-2. Wait for the email (can take a few hours)
-3. Unzip the file and grab `conversations.json`
-4. Drag it into Prompt Wrapped
+### Get your ChatGPT export
+1. Go to [chatgpt.com](https://chatgpt.com) → Settings → Data Controls → Export
+2. Email arrives within an hour
+3. Unzip → grab `conversations.json`
+4. Drop it into Prompt Wrapped
 
-## 🛠 Tech stack
+---
 
-React + TypeScript + Vite + Tailwind CSS + Recharts
+## Tech stack
 
-## 💻 Run locally
+React 18, TypeScript, Vite, Tailwind CSS, Recharts, Framer Motion, html-to-image. Deployed on Vercel.
+
+Auto-detects the export format. Parses Claude's flat structure and ChatGPT's tree-based mapping into a common normalized schema, then runs everything off that single shape.
+
+## Run locally
 
 ```bash
 git clone https://github.com/meenakshirnair/prompt-wrapped.git
@@ -71,25 +90,31 @@ npm run dev
 
 Open `http://localhost:5173` and drop your export.
 
-## 🗺 Roadmap
+## Roadmap
 
 - [x] Claude export support
+- [x] ChatGPT export support
 - [x] Topic classifier (keyword-based)
-- [x] Downloadable Wrapped card
-- [ ] ChatGPT export support
-- [ ] Smarter topic classification (embeddings-based)
+- [x] Downloadable cover PNG
+- [x] One-click LinkedIn share with auto-generated caption
+- [x] Light & dark mode
 - [ ] Gemini export support
-- [ ] Multi-file merge (combine exports from multiple platforms)
-- [ ] Dark/light theme toggle
+- [ ] Smarter topic classification (embeddings-based)
+- [ ] Multi-file merge (combine Claude + ChatGPT data into one issue)
+- [ ] Per-conversation drill-down
 
 Have an idea? [Open an issue.](https://github.com/meenakshirnair/prompt-wrapped/issues)
 
-## 📄 License
+## License
 
-MIT — do whatever you want with this.
+MIT — fork it, ship your own version, make it yours.
 
-## 👋 About
+---
 
-Built by [Meenakshi Rajeev Nair](https://www.linkedin.com/in/meenakshirnair/) — an MSBA + AI engineer pivoting into Product Analytics and AI/BA roles. This project is an intersection of both worlds: hands-on AI engineering plus behavioral analytics on my own data.
+## Built by
 
-If you're hiring for Product Analyst, AI/ML Business Analyst, or similar roles, I'd love to chat.
+**[Meenakshi Rajeev Nair](https://www.linkedin.com/in/meenakshi-rajeev-nair-43301b248/)** — MSBA grad with 2.5 years of AI engineering at EY, now pivoting into Product Analytics and AI/ML Business Analyst roles.
+
+This project sits at the intersection of both — applied AI engineering plus the analytics thinking I picked up at W. P. Carey. Built end-to-end in a week, including the data parsing, the design system, and the launch.
+
+If you're hiring for Product Analyst, AI BA, or similar roles, I'd love to talk.
